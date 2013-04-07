@@ -8,7 +8,10 @@ terma-render
 $scope.htmlReady()
 ```
 
-在本项目运行npm install
+在本目录运行
+```sh
+npm install
+```
 
 ## 使用
 ```sh
