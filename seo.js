@@ -2,7 +2,7 @@
     var getModule = function(angular) {
         return angular.module('seo', [])
             .run(function($rootScope) {
-                $rootScope.htmlReady = function() {
+                $rootScope.$on('$viewContentLoaded', function(){
                     $rootScope.$evalAsync(function() { // fire after $digest
                         setTimeout(function() { // fire after DOM rendering
                             var evt = document.createEvent('Event');
@@ -10,7 +10,7 @@
                             document.dispatchEvent(evt);
                         }, 0);
                     });
-                };
+                })
             });
     };
     if (typeof define == 'function' && define.amd)
