@@ -1,32 +1,20 @@
-phantom = require("phantom")
+exec = require("child_process").exec
 express = require("express")
 app = express()
 
 port = parseInt(process.argv[2])
 url = process.argv[3]
 
+options = {}
+
 app.get "*", (req, res) ->
-  phantom.create (ph) ->
-    ph.createPage (page) ->
+  if req.route.params[0]
+    exec "phantomjs ./runner.coffee #{url}#{req.route.params[0]}", options, (error, stdout, stderr) ->
+      res.send(stdout)
+  else
+    res.send('need url')
 
-      console.log "#{url}#{req.route.params[0]}"
+app.listen port
 
-      page.set 'onCallback', (content)->
-        res.end content
-        ph.exit()
-
-      page.set 'onInitialized', ->
-        page.evaluate ->
-          document.addEventListener(
-            '__htmlReady__',
-            (-> window.callPhantom(document.getElementsByTagName('html')[0].outerHTML)),
-            false
-          )
-
-      page.open "#{url}#{req.route.params[0]}"
-
-    , { parameters: { 'disk-cache': 'no', 'load-images': false, 'local-to-remote-url-access': true } }
-
-app.listen(port)
 console.log('Listening on ' + port + '...')
 console.log('Press Ctrl+C to stop.')
